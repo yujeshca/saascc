@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int               @id @default(autoincrement())
+  name            String
+  email           String            @unique
+  password        String
+  role            Role              @default(USER)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  ChildcareCenter ChildcareCenter[]
+
+  @@map("users")
+}
+
+model ChildcareCenter {
+  id            Int           @id @default(autoincrement())
+  name          String
+  tagline       String?
+  address       String
+  contact       String
+  businessHours String?
+  mission       String?
+  programs      Program[]
+  webPages      WebPage[]
+  testimonials  Testimonial[]
+  user          User?         @relation(fields: [userId], references: [id])
+  userId        Int?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("childcare_centers")
+}
+
+model Program {
+  id                Int             @id @default(autoincrement())
+  name              String
+  description       String
+  childcareCenter   ChildcareCenter @relation(fields: [childcareCenterId], references: [id], onDelete: Cascade)
+  childcareCenterId Int
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@map("programs")
+}
+
+model WebPage {
+  id                 Int              @id @default(autoincrement())
+  title              String
+  slug               String           @unique
+  content            String           @db.Text
+  seoMetaTitle       String?
+  seoMetaDescription String?
+  seoKeywords        String?
+  pageType           String
+  childcareCenter    ChildcareCenter  @relation(fields: [childcareCenterId], references: [id])
+  childcareCenterId  Int
+  jsonLd             String?          @db.Text
+  history            WebPageHistory[]
+  filePath           String
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+  Website            Website?         @relation(fields: [websiteId], references: [id])
+  websiteId          Int?
+
+  @@map("web_pages")
+}
+
+model WebPageHistory {
+  id        Int     @id @default(autoincrement())
+  webPage   WebPage @relation(fields: [webPageId], references: [id])
+  webPageId Int
+  version   Int
+  content   String  @db.Text
+  changes   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("web_page_history")
+}
+
+model Testimonial {
+  id                Int             @id @default(autoincrement())
+  name              String
+  content           String          @db.Text
+  childcareCenter   ChildcareCenter @relation(fields: [childcareCenterId], references: [id])
+  childcareCenterId Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("testimonials")
+}
+
+model Website {
+  id             Int      @id @default(autoincrement())
+  childcare_id   Int
+  commonMetaCode String?
+  header_id      Int?
+  footer_id      Int?
+  themes_id      Int?
+  logo           String?
+  darkLogo       String?
+  favicon        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  header   Header?   @relation(fields: [header_id], references: [id])
+  footer   Footer?   @relation(fields: [footer_id], references: [id])
+  theme    Theme?    @relation(fields: [themes_id], references: [id])
+  webpages WebPage[]
+  menu     Menu?
+
+  @@map("website")
+}
+
+model Theme {
+  id       Int          @id @default(autoincrement())
+  title    String
+  pages    ThemesPage[]
+  websites Website[]
+
+  @@map("themes")
+}
+
+model ThemesPage {
+  id            Int    @id @default(autoincrement())
+  themes_id     Int
+  structureJson String
+  templateName  String
+  code          String
+  theme         Theme  @relation(fields: [themes_id], references: [id])
+
+  @@map("themes_page")
+}
+
+model Header {
+  id            Int      @id @default(autoincrement())
+  title         String
+  code          String
+  structureJson String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  websites Website[]
+
+  @@map("header")
+}
+
+model Footer {
+  id            Int      @id @default(autoincrement())
+  title         String
+  code          String
+  structureJson String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  websites Website[]
+
+  @@map("footer")
+}
+
+model Menu {
+  id            Int      @id @default(autoincrement())
+  website_id    Int      @unique
+  website       Website  @relation(fields: [website_id], references: [id])
+  title         String
+  structureJson String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("menu")
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}

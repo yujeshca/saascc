@@ -1,0 +1,45 @@
+{
+  "sections": [
+    {
+      "name": "Hero",
+      "type": "Hero",
+      "content": {
+        "heading": "Welcome to Our Platform",
+        "subheading": "Your success starts here. Let us help you grow.",
+        "buttonText": "Get Started"
+      },
+      "className": "bg-blue-100 p-6 rounded-md text-center my-4"
+    },
+    {
+      "name": "Features",
+      "type": "Features",
+      "content": {
+        "title": "Our Features",
+        "features": [
+          "Easy to use interface",
+          "Powerful analytics tools",
+          "Scalable infrastructure"
+        ]
+      },
+      "className": "bg-green-100 p-6 rounded-md my-4"
+    },
+    {
+      "name": "FAQ",
+      "type": "FAQ",
+      "content": {
+        "title": "Frequently Asked Questions",
+        "questions": [
+          {
+            "question": "How can I start?",
+            "answer": "You can get started by clicking the 'Get Started' button above."
+          },
+          {
+            "question": "What features are available?",
+            "answer": "We offer a variety of features designed to help you grow."
+          }
+        ]
+      },
+      "className": "bg-purple-100 p-6 rounded-md my-4"
+    }
+  ]
+}
